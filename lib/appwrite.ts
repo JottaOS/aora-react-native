@@ -2,7 +2,7 @@
  * Appwrite config. The keys should be safely public, but i put them in a .env anyways
  */
 import { Login, Register } from "@/components/interfaces";
-import { Account, Avatars, Client, Databases, ID } from "react-native-appwrite";
+import { Account, Avatars, Client, Databases, ID, Query } from "react-native-appwrite";
 
 export const config = {
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT ?? "",
@@ -68,3 +68,24 @@ export const signIn = async ({ email, password }: Login) => {
     throw error;
   }
 };
+
+export const getCurrentUser = async () => {
+  try {
+    const currentAccount = await account.get();
+
+    if(!currentAccount) throw new Error;
+
+    const currentUser = await databases.listDocuments(
+      config.databaseId,
+      config.userCollectionId,
+      [Query.equal("accountId", currentAccount.$id)]
+    )
+
+    if(!currentUser) throw new Error;
+
+    return currentUser.documents[0];
+  } catch (error) {
+    console.log(error);
+    
+  }
+}

@@ -1,11 +1,13 @@
-import { View, Text, ScrollView, Image } from "react-native";
+import { View, Text, ScrollView, Image, Alert } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import images from "@/constants/images";
 import FormField from "@/components/FormField";
 import { Login } from "@/components/interfaces";
 import CustomButton from "@/components/CustomButton";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import { getCurrentUser, signIn } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const SignIn = () => {
   const [form, setForm] = useState<Login>({
@@ -13,8 +15,31 @@ const SignIn = () => {
     password: "",
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const { setUser, setIsLoggedIn } = useGlobalContext();
+  const submit = async () => {
+    const { email, password } = form;
+    if (!email || !password) {
+      Alert.alert("Please fill in all the fields.");
+      return;
+    }
 
-  const submit = () => {};
+    setIsSubmitting(true);
+
+    try {
+      await signIn(form);
+      const result = await getCurrentUser();
+      setUser(result || null);
+      setIsLoggedIn(true);
+      // set it to global state...
+      Alert.alert("Success", "User signed in successfully!");
+      router.replace("/home");
+    } catch (error) {
+      // @ts-ignore
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaView className="h-full bg-primary">
@@ -50,7 +75,9 @@ const SignIn = () => {
             isLoading={isSubmitting}
           />
           <View className="flex-row justify-center gap-2 pt-5">
-            <Text className="text-sm text-gray-100 font-pregular">Don't have an account?</Text>
+            <Text className="text-sm text-gray-100 font-pregular">
+              Don't have an account?
+            </Text>
             <Link href="sign-up" className="font-psemibold text-secondary-100">
               Sign up
             </Link>
