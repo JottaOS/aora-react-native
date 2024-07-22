@@ -29,3 +29,19 @@ export interface EmptyStateProps {
   title: string;
   subtitle: string;
 }
+
+export interface Creator {
+  username: string;
+  avatar: string;
+}
+
+export interface Video {
+  title: string;
+  thumbnail: string;
+  videoUrl: string;
+  creator: Creator;
+}
+
+export interface VideoCardProps {
+  video: Video;
+}
