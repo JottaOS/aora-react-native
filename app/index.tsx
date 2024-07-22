@@ -35,7 +35,7 @@ export default function App() {
           <View className="relative mt-5">
             <Text className="text-3xl text-center text-white font-pbold">
               Discover Endless Possibilities with{" "}
-              <Text className="text-secondary-200">Aora</Text>
+              <Text className="text-secondary-200">Alan</Text>
             </Text>
             <Image
               source={images.path}

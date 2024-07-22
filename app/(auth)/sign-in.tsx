@@ -16,6 +16,7 @@ const SignIn = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { setUser, setIsLoggedIn } = useGlobalContext();
+
   const submit = async () => {
     const { email, password } = form;
     if (!email || !password) {
