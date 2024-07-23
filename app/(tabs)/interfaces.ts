@@ -1,4 +1,4 @@
-import { DocumentPickerAsset } from "expo-document-picker";
+import { ImagePickerAsset } from "expo-image-picker";
 import { ImageSourcePropType } from "react-native";
 
 export interface TabIconProps {
@@ -10,7 +10,7 @@ export interface TabIconProps {
 
 export interface CreateFormData {
   title: string;
-  video: DocumentPickerAsset | null;
-  thumbnail: DocumentPickerAsset | null;
+  video: ImagePickerAsset | null;
+  thumbnail: ImagePickerAsset | null;
   prompt: string;
 }
