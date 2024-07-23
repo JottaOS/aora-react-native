@@ -23,11 +23,12 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { user } = useGlobalContext();
   const { data: posts, isLoading, refetch } = useAppwrite(getAllPosts);
-  const { data: latestPosts } = useAppwrite(getLatestPosts);
+  const { data: latestPosts, refetch: refetchTrending } = useAppwrite(getLatestPosts);
 
   const onRefresh = () => {
     setRefreshing(true);
     refetch();
+    refetchTrending();
     setRefreshing(false);
   };
 
@@ -45,7 +46,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className="text-xl font-pbold text-white">
-                  {user?.$id}
+                  {user?.username}
                 </Text>
               </View>
               <View className="mt-1.5">

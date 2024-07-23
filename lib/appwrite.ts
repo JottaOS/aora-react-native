@@ -1,6 +1,7 @@
 /**
  * Appwrite config. The keys should be safely public, but i put them in a .env anyways
  */
+import { CreateFormData } from "@/app/(tabs)/interfaces";
 import { Login, Register } from "@/components/interfaces";
 import {
   Account,
@@ -8,7 +9,9 @@ import {
   Client,
   Databases,
   ID,
+  ImageGravity,
   Query,
+  Storage,
 } from "react-native-appwrite";
 
 export const config = {
@@ -25,6 +28,7 @@ export const config = {
 const client = new Client();
 const avatars = new Avatars(client);
 const databases = new Databases(client);
+const storage = new Storage(client);
 
 client
   .setEndpoint(config.endpoint) // Your Appwrite Endpoint
@@ -158,6 +162,84 @@ export const signOut = async () => {
     const session = await account.deleteSession("current");
 
     return session;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const uploadFile = async (file: any, type: "image" | "video") => {
+  if (!file) return;
+
+  const { mimeType, ...rest } = file;
+  const asset = { type: mimeType, ...rest };
+
+  try {
+    const uploadedFile = await storage.createFile(
+      config.storageId,
+      ID.unique(),
+      asset
+    );
+
+    const fileUrl = await getFilePreview(uploadedFile.$id, type);
+    return fileUrl;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getFilePreview = async (
+  fileId: string,
+  type: "image" | "video"
+) => {
+  let fileUrl;
+
+  try {
+    if (type === "video") {
+      fileUrl = storage.getFileView(config.storageId, fileId);
+    } else if (type === "image") {
+      fileUrl = storage.getFilePreview(
+        config.storageId,
+        fileId,
+        2000,
+        2000,
+        ImageGravity.Bottom,
+        100
+      );
+    } else {
+      throw new Error("Invalid file type");
+    }
+
+    if (!fileUrl) throw Error;
+
+    return fileUrl;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createVideoPost = async (
+  form: CreateFormData & { userId: string | undefined }
+) => {
+  try {
+    const [thumbnailUrl, videoUrl] = await Promise.all([
+      uploadFile(form.thumbnail, "image"),
+      uploadFile(form.video, "video"),
+    ]);
+
+    const newPost = await databases.createDocument(
+      config.databaseId,
+      config.videoCollectionId,
+      ID.unique(),
+      {
+        title: form.title,
+        thumbnail: thumbnailUrl,
+        video: videoUrl,
+        prompt: form.prompt,
+        creator: form.userId,
+      }
+    );
+
+    return newPost;
   } catch (error) {
     throw error;
   }
