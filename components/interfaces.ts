@@ -1,3 +1,5 @@
+import { ViewToken } from "react-native";
+
 export interface Login {
   email: string;
   password: string;
@@ -22,7 +24,7 @@ export type SearchInputProps = Omit<
 >;
 
 export interface TrendingProps {
-  posts: { id: number }[];
+  posts: Video[];
 }
 
 export interface EmptyStateProps {
@@ -30,18 +32,41 @@ export interface EmptyStateProps {
   subtitle: string;
 }
 
-export interface Creator {
-  username: string;
-  avatar: string;
+export interface Video {
+  $collectionId: string;
+  $createdAt:    Date;
+  $databaseId:   string;
+  $id:           string;
+  $permissions:  any[];
+  $tenant:       string;
+  $updatedAt:    Date;
+  creator:       Creator;
+  prompt:        string;
+  thumbnail:     string;
+  title:         string;
+  video:         string;
 }
 
-export interface Video {
-  title: string;
-  thumbnail: string;
-  videoUrl: string;
-  creator: Creator;
+export interface Creator {
+  $collectionId: string;
+  $createdAt:    Date;
+  $databaseId:   string;
+  $id:           string;
+  $permissions:  string[];
+  $tenant:       string;
+  $updatedAt:    Date;
+  accountId:     string;
+  avatar:        string;
+  email:         string;
+  username:      string;
 }
 
 export interface VideoCardProps {
   video: Video;
 }
+
+export interface TrendingProps {
+  posts: Video[];
+}
+
+export type ViewableItemsChangedCallback = (info: { changed: ViewToken[], viewableItems: ViewToken[] }) => void;

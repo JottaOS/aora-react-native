@@ -7,7 +7,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   const {
     title,
     thumbnail,
-    videoUrl,
     creator: { username, avatar },
   } = video;
 
