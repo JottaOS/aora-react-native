@@ -69,8 +69,6 @@ export const createUser = async ({ email, password, username }: Register) => {
 
 export const signIn = async ({ email, password }: Login) => {
   try {
-    const currentSession = await account.getSession("current");
-    if (currentSession) return currentSession;
     const newSession = await account.createEmailPasswordSession(
       email,
       password
@@ -84,7 +82,6 @@ export const signIn = async ({ email, password }: Login) => {
 export const getCurrentUser = async () => {
   try {
     const currentAccount = await account.get();
-
     if (!currentAccount) throw new Error();
 
     const currentUser = await databases.listDocuments(
@@ -97,7 +94,7 @@ export const getCurrentUser = async () => {
 
     return currentUser.documents[0];
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -137,6 +134,30 @@ export const searchPosts = async (query: any) => {
     );
 
     return posts.documents;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserPosts = async (userId: string) => {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videoCollectionId,
+      [Query.equal("creator", userId)]
+    );
+
+    return posts.documents;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const signOut = async () => {
+  try {
+    const session = await account.deleteSession("current");
+
+    return session;
   } catch (error) {
     throw error;
   }

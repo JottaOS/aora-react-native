@@ -73,3 +73,11 @@ export type ViewableItemsChangedCallback = (info: {
   changed: ViewToken[];
   viewableItems: ViewToken[];
 }) => void;
+
+
+export interface InfoBoxProps {
+  title: string;
+  subtitle?: string;
+  containerStyles?: string;
+  titleStyles?: string;
+}

@@ -27,7 +27,6 @@ const TrendingItem = ({
 }) => {
   const [play, setPlay] = useState<boolean>(false);
 
-  console.log(item.video);
   return (
     <Animatable.View
       className="mx-2"
