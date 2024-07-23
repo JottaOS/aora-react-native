@@ -2,11 +2,13 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { VideoCardProps } from "./interfaces";
 import icons from "@/constants/icons";
+import { ResizeMode, Video } from "expo-av";
 
 const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   const {
     title,
     thumbnail,
+    video: videoUrl,
     creator: { username, avatar },
   } = video;
 
@@ -46,15 +48,44 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
           </View>
         </View>
         {play ? (
-          <Text className="text-white">Playinh</Text>
+          <Video
+            /* TODO: Fix this error
+            None of the available extractors (c, d, b, g, k, b, a0, d, h0, e, h, b, e, f, b, a) could read the stream
+          */
+            source={{ uri: videoUrl }}
+            className="w-[90vw] h-72 rounded-xl mt-3 bg-white/10"
+            resizeMode={ResizeMode.CONTAIN}
+            useNativeControls
+            shouldPlay
+            onPlaybackStatusUpdate={(status) => {
+              // @ts-ignore
+              const { didJustFinish, error } = status;
+
+              if (didJustFinish) {
+                setPlay(false);
+              }
+
+              if (error) {
+                console.error(error);
+              }
+            }}
+          />
         ) : (
-          <TouchableOpacity activeOpacity={0.7} onPress={() => setPlay(true)} className="w-[90vw] h-60 rounded-xl mt-3 relative justify-center items-center">
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => setPlay(true)}
+            className="w-[90vw] h-60 rounded-xl mt-3 relative justify-center items-center"
+          >
             <Image
               source={{ uri: thumbnail }}
               resizeMode="cover"
               className="w-full h-full rounded-xl mt-3"
             />
-            <Image source={icons.play} className="absolute w-12 h-12" resizeMode="contain"/>
+            <Image
+              source={icons.play}
+              className="absolute w-12 h-12"
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         )}
       </View>
